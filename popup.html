@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    li {
+    list-style-type: none;
+    }
+    .parentList {
+        margin-left: 5px;
+        padding-left: 0px;
+    }
+    body{
+        width: 300px;
+    }
+    input[type="text"]
+    {
+        width: 70%;        
+    }   
+    input[type="submit"]
+    {
+        width: 20%;        
+        margin-left: 10px;
+    }     
+    </style>
+    
+  </head>
+  <body>
+    <div>
+        <div>
+            <ul class="parentList">
+                <li><input type="radio" name="parentRadios" data-url="www.chronofhorse.com/forum/forum/discussion-forums">Chronicle of the horse</li>
+                    <ul>
+                        <li><input type="radio" name="childRadios" data-url="dressage">Dressage</li>
+                        <li><input type="radio" name="childRadios" data-url="hunter-jumper">Hunters</li>
+                        <li><input type="radio" name="childRadios" data-url="horse-care">Horse Care</li>
+                        
+                    </ul>
+                <li><input type="radio" name="parentRadios" data-url="www.reddit.com/r">Reddit</li>
+                    <ul>
+                        <li><input type="radio" name="childRadios" data-url="worldnews">r/Worldnews</li>
+                        <li><input type="radio" name="childRadios" data-url="intp">r/INTP</li>
+                    </ul>
+            </ul>
+        </div>
+        <div>
+            <input type="text" id="searchText"/> <input type="submit" id="searchButton">
+        </div>
+    </div>
+  </body>
+  <script src="popup.js"></script> 
+</html>

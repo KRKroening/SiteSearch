@@ -2,5 +2,14 @@
     "name": "SiteSearch",
     "version": "1.0",
     "description": "To search specific sites",
+    "permissions" : ["activeTab", "storage", "declarativeContent"],
+    "background": {
+        "scripts" : ["background.js"],
+        "persistant": false
+    },
+    "page_action": {
+        "default_popup": "popup.html"
+    }
+    ,
     "manifest_version": 2
 }
