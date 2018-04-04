@@ -1,18 +1,3 @@
-// let changeColor = document.getElementById('changeColor');
-
-// chrome.storage.sync.get('color', function(data) {
-// changeColor.style.backgroundColor = data.color;
-// changeColor.setAttribute('value', data.color);
-// });
-
-// changeColor.onclick = function(element) {
-//     let color = element.target.value;
-//       chrome.tabs.executeScript(
-//           tabs[0].id,
-//           {code: 'document.body.style.backgroundColor = "' + color + '";'});
-//   };
-
-
 /* 
 TODO:
 Store sites
@@ -33,8 +18,7 @@ function load(){
         let selectedChild = findSelectedChild()
 
         let locationString = google + searchString+"+site:" + selectedParent + "/" + selectedChild
-        window.open(locationString)
-        //console.log(google + searchString+"+site:" + selectedParent + "/" + selectedChild)
+        window.open(locationString)        
     })
 
     function findSelectedParent(){
@@ -58,6 +42,43 @@ function load(){
         }, this); 
         return selected
     }
+
+
+function loadSavedSites(){
+    let storageSite = localStorage["Sites"]
+    let siteSection = `<li><input type="radio" name="parentRadios" data-url="{0}">{1}</li>            
+        `;
+    let subsiteSelection =  `
+        <li><input type="radio" name="childRadios" data-url="{0}">{1}
+        </li>`;
+    if(storageSite["sites"].length > 0){
+        storageSite.forEach(function(s){
+            let toAppend;
+            toAppend += siteSection.format(s["siteUrl"], s["siteName"])
+            if(s["subsites"].length > 0){
+                s["subsites"].forEach(function(s){
+                    toAppend+= subsiteSelection.format(s["subsiteUrl"],s["subsiteName"])
+                })
+            }
+            toAppend+= "</li>"
+            $(".parentList").append(toAppend)            
+        })
+    }else{
+        $(".parentList").append("<li>No sites saved. Go to the options menu to add sites.</li>")
+    }    
+}
+
+if (!String.prototype.format) {
+    String.prototype.format = function() {
+      var args = arguments;
+      return this.replace(/{(\d+)}/g, function(match, number) { 
+        return typeof args[number] != 'undefined'
+          ? args[number]
+          : match
+        ;
+      });
+    };
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function(){
