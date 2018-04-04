@@ -1,20 +1,22 @@
 <html>
 <head>
 	<title>SiteSearch: Options</title>
-	<script type="text/javascript" src="options.js"></script>
 </head>
-<body onload="loadOptions()">
+<body>
 	<h1>Add Sites and site sections</h1>
-    <input id="site" type="text">
-    <input id="siteUrl" type="text">
+    <input id="site" type="text" placeholder="Site name (ie. Reddit)">
+    <input id="siteUrl" type="text" placeholder="General site url (ie. Reddit.com/r">
     <hr>
     <h2>Subsites</h2>
-    <div id=subsites>
-        <input type="text">
-        <input type="text">
-        <i class="glyphicon glyphicon-plus"></i>
+    <div id="subsites">
+        <input type="text" placeholder="Site section name (ie. r/Worldnews)">
+        <input type="text" placeholder="Subsection url (ie. worldnews)">
+        <span class="plusButton">+</span>  
+        <br>
     </div>
 	<br />
-	<button onclick="saveOptions()">Save</button>	
+	<button>Save</button>	
 </body>
+<script type="text/javascript" src="options.js"></script>
+
 </html>
