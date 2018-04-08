@@ -45,27 +45,40 @@ function load(){
 
 
 function loadSavedSites(){
-    let storageSite = localStorage["Sites"]
-    let siteSection = `<li><input type="radio" name="parentRadios" data-url="{0}">{1}</li>            
-        `;
-    let subsiteSelection =  `
-        <li><input type="radio" name="childRadios" data-url="{0}">{1}
-        </li>`;
-    if(storageSite["sites"].length > 0){
-        storageSite.forEach(function(s){
-            let toAppend;
-            toAppend += siteSection.format(s["siteUrl"], s["siteName"])
-            if(s["subsites"].length > 0){
-                s["subsites"].forEach(function(s){
-                    toAppend+= subsiteSelection.format(s["subsiteUrl"],s["subsiteName"])
-                })
-            }
-            toAppend+= "</li>"
-            $(".parentList").append(toAppend)            
-        })
+    let parentList = document.querySelector(".parentList")
+
+    if(localStorage.hasOwnProperty("Sites"))
+    {            
+        let storageSite = localStorage["Sites"]
+        let siteSection = `<li><input type="radio" name="parentRadios" data-url="{0}">{1}</li>            
+            `;
+        let subsiteSelection =  `
+            <li><input type="radio" name="childRadios" data-url="{0}">{1}
+            </li>`;
+        if(storageSite["sites"].length > 0){
+            storageSite.forEach(function(s){
+                let toAppend;
+                toAppend += siteSection.format(s["siteUrl"], s["siteName"])
+                if(s["subsites"].length > 0){
+                    s["subsites"].forEach(function(s){
+                        toAppend+= subsiteSelection.format(s["subsiteUrl"],s["subsiteName"])
+                    })
+                }
+                toAppend+= "</li>"
+                $(".parentList").append(toAppend)            
+            })
+        }else{
+            var p = document.createElement("p");        
+            var node = document.createTextNode("No sites saved. Go to the options menu to add sites.");
+            p.appendChild(node);        
+            parentList.appendChild(p)            
+        }        
     }else{
-        $(".parentList").append("<li>No sites saved. Go to the options menu to add sites.</li>")
-    }    
+        var p = document.createElement("p");        
+        var node = document.createTextNode("No sites saved. Go to the options menu to add sites.");
+        p.appendChild(node);        
+        parentList.appendChild(p)
+    }       
 }
 
 if (!String.prototype.format) {
@@ -79,6 +92,12 @@ if (!String.prototype.format) {
       });
     };
   }
+
+//
+
+
+loadSavedSites()
+
 }
 
 document.addEventListener("DOMContentLoaded", function(){
