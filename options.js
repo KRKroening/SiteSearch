@@ -4,10 +4,8 @@ function load(){
     document.querySelector(".plusButton").addEventListener('click',function(){
         const subsiteBoxes = document.querySelectorAll("#subsites input")
         const subsiteContainer = document.querySelector("#subsites")
-        
-        
+                
         // take textboses to labels
-
         let subsitename = subsiteBoxes[0].value
         let subsiteurl = subsiteBoxes[1].value
 
@@ -17,13 +15,24 @@ function load(){
         subsiteContainer.appendChild(p)
     
         //clear text boxes
-
         subsiteBoxes.forEach(s => {
             s.value = ""
         });
     })
 
-    document.querySelector("#clear").addEventListener('click', chrome.storage.sync.clear())
+    function clearBoxes(){
+        subsiteText =  document.querySelectorAll("#subsites p")
+        subsiteText.forEach(s => {
+            s.remove()
+        });
+        document.querySelector("#site").value = ""
+        document.querySelector("#siteUrl").value = ""        
+    }
+
+    document.querySelector("#clear").addEventListener('click', function(){
+        chrome.storage.sync.clear()
+        loadSavedSites()
+    })
 
     document.querySelector("#save").addEventListener('click',function(){
         let saveObject = {
@@ -52,19 +61,6 @@ function load(){
             })
         }
 
-        // chrome.storage.local.set({"Sites": []}, function() {            
-        //   });
-        // localStorage.setItem("Sites", s aveObject)
-        // if(localStorage.hasOwnProperty("Sites"))
-        // {
-        //     localStorage["Sites"].push([JSON.stringify(saveObject)])            
-        // } else{
-        //     localStorage["Sites"] = new Array()
-        //     localStorage["Sites"].push(JSON.stringify(saveObject))
-        // }
-        // console.log(localStorage)
-        // localStorage["Sites"]["sites"].push(saveObject)
-
         chrome.storage.sync.get("Sites", function (result) {
             // the input argument is ALWAYS an object containing the queried keys
             // so we select the key we need
@@ -81,10 +77,68 @@ function load(){
                 // if you don't  want to define default values
                 chrome.storage.sync.get("Sites", function (result) {
                     console.log(result)
+                    loadSavedSites()                    
                 });
             });
         });
+
+        clearBoxes()
     })
+
+    function loadSavedSites(){
+        let parentList = document.querySelector("#savedSites")
+        while (parentList.firstChild) {
+            parentList.removeChild(parentList.firstChild);
+        }
+        let storageSite
+
+        chrome.storage.sync.get("Sites", function (result) {
+            storageSite = result["Sites"]
+        
+            if(storageSite.length > 0)
+            {                            
+                let siteSection = "<li><p>{0} @ {1}</p>"
+                let subsiteSelection =  "<li><p>{0} @ {1}</p></li>";
+                storageSite.forEach(function(s){
+                    let toAppend = "";
+                    toAppend += siteSection.format( s["siteName"], s["siteUrl"])
+                    if(s["subsites"].length > 0){
+                        toAppend += "<ul>"
+                        s["subsites"].forEach(function(s){
+                            toAppend+= subsiteSelection.format(s["subsiteName"],s["subsiteUrl"])
+                        })
+                        toAppend += "</ul>"
+                    }
+                    toAppend+= "</li>"                    
+                    document.querySelector("#savedSites").insertAdjacentHTML( 'beforeend', toAppend );         
+                })                
+            }else{
+                var p = document.createElement("p");        
+                var node = document.createTextNode("No sites saved.");
+                p.appendChild(node);        
+                parentList.appendChild(p)
+            }    
+        });   
+    }
+
+
+    if (!String.prototype.format) {
+        String.prototype.format = function() {
+          var args = arguments;
+          return this.replace(/{(\d+)}/g, function(match, number) { 
+            return typeof args[number] != 'undefined'
+              ? args[number]
+              : match
+            ;
+          });
+        };
+    }
+
+    chrome.storage.sync.get("Sites", function (result) {
+        console.log(result)
+    });
+
+    loadSavedSites()
 
 }
 

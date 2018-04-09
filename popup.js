@@ -47,25 +47,26 @@ function load(){
 function loadSavedSites(){
     let parentList = document.querySelector(".parentList")
 
-    if(localStorage.hasOwnProperty("Sites"))
-    {            
-        let storageSite = localStorage["Sites"]
-        let siteSection = `<li><input type="radio" name="parentRadios" data-url="{0}">{1}</li>            
-            `;
+    chrome.storage.sync.get("Sites", function (result) {
+        storageSite = result["Sites"]        
+
+        let siteSection = `<li><input type="radio" name="parentRadios" data-url="{0}">{1}`;
         let subsiteSelection =  `
             <li><input type="radio" name="childRadios" data-url="{0}">{1}
             </li>`;
-        if(storageSite["sites"].length > 0){
+        if(storageSite.length > 0){
             storageSite.forEach(function(s){
-                let toAppend;
+                let toAppend = "";
                 toAppend += siteSection.format(s["siteUrl"], s["siteName"])
                 if(s["subsites"].length > 0){
+                    toAppend += "<ul>"
                     s["subsites"].forEach(function(s){
                         toAppend+= subsiteSelection.format(s["subsiteUrl"],s["subsiteName"])
                     })
+                    toAppend += "</ul>"
                 }
                 toAppend+= "</li>"
-                $(".parentList").append(toAppend)            
+                document.querySelector(".parentList").insertAdjacentHTML( 'beforeend', toAppend );                                    
             })
         }else{
             var p = document.createElement("p");        
@@ -73,12 +74,7 @@ function loadSavedSites(){
             p.appendChild(node);        
             parentList.appendChild(p)            
         }        
-    }else{
-        var p = document.createElement("p");        
-        var node = document.createTextNode("No sites saved. Go to the options menu to add sites.");
-        p.appendChild(node);        
-        parentList.appendChild(p)
-    }       
+    });     
 }
 
 if (!String.prototype.format) {
