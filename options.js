@@ -10,7 +10,7 @@ function load(){
         let subsiteurl = subsiteBoxes[1].value
 
         var p = document.createElement("p");        
-        var node = document.createTextNode( subsitename+" at"+ subsiteurl);
+        var node = document.createTextNode( subsitename+" @ "+ subsiteurl);
         p.appendChild(node);        
         subsiteContainer.appendChild(p)
     
@@ -34,6 +34,7 @@ function load(){
         loadSavedSites()
     })
 
+    //Save site to storage
     document.querySelector("#save").addEventListener('click',function(){
         let saveObject = {
             siteName : "",
@@ -51,7 +52,7 @@ function load(){
         if(subsites.length > 0)
         {
             subsites.forEach(function(s){
-                let split = s.textContent.split(" ")
+                let split = s.textContent.split(" @ ")
                 var subObject = {
                     subsiteName : split[0],
                     subsiteUrl : split[1]
@@ -69,6 +70,17 @@ function load(){
             {
                 userKeyIds = new Array(saveObject)
             }else{
+                userKeyIds.forEach( u =>{
+                    if(u != null){
+                        if(u.siteUrl == saveObject.siteUrl)
+                        {
+                            u.subsites.concat(saveObject.subsites)
+                            u.subsites = u.subsites.filter(function(item, pos, self) {
+                                return self.indexOf(item) == pos;
+                            })   
+                        }
+                    }
+                })
                 userKeyIds.push(saveObject);                
             }
             // set the new array value to the same key
@@ -85,6 +97,7 @@ function load(){
         clearBoxes()
     })
 
+    //load sites on page load
     function loadSavedSites(){
         let parentList = document.querySelector("#savedSites")
         while (parentList.firstChild) {
@@ -97,20 +110,22 @@ function load(){
         
             if(storageSite.length > 0)
             {                            
-                let siteSection = "<li><p>{0} @ {1}</p>"
-                let subsiteSelection =  "<li><p>{0} @ {1}</p></li>";
+                let siteSection = "<li><p>{0} @ {1}</p><span>X</span>"
+                let subsiteSelection =  "<li><p>{0} @ {1}</p><span>X</span></li>";
                 storageSite.forEach(function(s){
-                    let toAppend = "";
-                    toAppend += siteSection.format( s["siteName"], s["siteUrl"])
-                    if(s["subsites"].length > 0){
-                        toAppend += "<ul>"
-                        s["subsites"].forEach(function(s){
-                            toAppend+= subsiteSelection.format(s["subsiteName"],s["subsiteUrl"])
-                        })
-                        toAppend += "</ul>"
-                    }
-                    toAppend+= "</li>"                    
-                    document.querySelector("#savedSites").insertAdjacentHTML( 'beforeend', toAppend );         
+                    if(s != null){
+                        let toAppend = "";
+                        toAppend += siteSection.format( s["siteName"], s["siteUrl"])
+                        if(s["subsites"].length > 0){
+                            toAppend += "<ul>"
+                            s["subsites"].forEach(function(s){
+                                toAppend+= subsiteSelection.format(s["subsiteName"],s["subsiteUrl"])
+                            })
+                            toAppend += "</ul>"
+                        }
+                        toAppend+= "</li>"                    
+                        document.querySelector("#savedSites").insertAdjacentHTML( 'beforeend', toAppend );  
+                    }       
                 })                
             }else{
                 var p = document.createElement("p");        
@@ -118,10 +133,79 @@ function load(){
                 p.appendChild(node);        
                 parentList.appendChild(p)
             }    
+            var nodes = document.querySelectorAll("#savedSites span")
+            nodes.forEach(x => {
+                x.addEventListener('click', removeSiteOrChild)
+            })
         });   
     }
 
+    function removeSiteOrChild(){
+        var node = this.parentNode
+        var childOrParent = node.parentNode.id == "savedSites"? "P" : "C"
 
+        switch (childOrParent) {
+            case "P": 
+                var siteName = node.firstChild.textContent.split(" @ ")[0]    
+                
+                chrome.storage.sync.get("Sites", function (result) {
+                    storage = result["Sites"]                    
+                    for (var i = 0; i < storage.length; i++) {
+                        if(storage[i] != null){
+                            if(storage[i].siteName == siteName)
+                            {
+                                //delete storage[i]
+                                storage.splice(i,1)
+                                break
+                            }                            
+                        }
+                    }                    
+                    chrome.storage.sync.set({"Sites": storage}, function () {
+                        chrome.storage.sync.get("Sites", function (result) {
+                            console.log(result)
+                            loadSavedSites()                    
+                        });
+                    })
+                })
+
+                break;
+
+            case "C": 
+                var subsiteName = node.firstChild.textContent.split(" @ ")[0]    
+                var siteName = node.parentNode.parentNode.firstChild.textContent.split(" @ ")[0]
+                
+                chrome.storage.sync.get("Sites", function (result) {
+                    storage = result["Sites"]
+                                        
+                    for (var i = 0; i < storage.length; i++) {
+                        if(storage[i] != null){
+                            if(storage[i].siteName == siteName)
+                            {
+                                for (var n = 0; n < storage[i].subsites.length; n++) {
+                                    if(storage[i].subsites != null)
+                                    {
+                                        if(storage[i].subsites[n].subsiteName == subsiteName)
+                                        {
+                                            storage[i].subsites.splice(n,1)
+                                            break
+                                        }
+                                    } 
+                                }                                                                
+                            }                            
+                        }
+                    }    
+                    chrome.storage.sync.set({"Sites": storage}, function () {
+                        loadSavedSites()                    
+                    })
+                })
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    // String interpolation
     if (!String.prototype.format) {
         String.prototype.format = function() {
           var args = arguments;
@@ -134,11 +218,10 @@ function load(){
         };
     }
 
-    chrome.storage.sync.get("Sites", function (result) {
-        console.log(result)
-    });
-
     loadSavedSites()
+    
+
+    
 
 }
 

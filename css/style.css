@@ -1,0 +1,10 @@
+#savedSites p{
+    display: inline;
+    margin-right: 15px;
+}
+
+#savedSites Span{
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+}
