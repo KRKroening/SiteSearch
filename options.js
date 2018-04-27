@@ -70,18 +70,26 @@ function load(){
             {
                 userKeyIds = new Array(saveObject)
             }else{
+                var duplicate = false
                 userKeyIds.forEach( u =>{
                     if(u != null){
                         if(u.siteUrl == saveObject.siteUrl)
                         {
-                            u.subsites.concat(saveObject.subsites)
+                            duplicate = true
+                            saveObject.subsites.forEach(s => {
+                                u.subsites.push(s)
+                            })
+                            
                             u.subsites = u.subsites.filter(function(item, pos, self) {
                                 return self.indexOf(item) == pos;
                             })   
                         }
                     }
                 })
-                userKeyIds.push(saveObject);                
+                if (!duplicate){
+                    userKeyIds.push(saveObject);
+                }
+                
             }
             // set the new array value to the same key
             chrome.storage.sync.set({"Sites": userKeyIds}, function () {
