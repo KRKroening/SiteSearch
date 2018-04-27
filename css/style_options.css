@@ -1,0 +1,43 @@
+body, button, input{
+    font-family: 'Titillium Web', sans-serif;
+}
+
+body{
+    margin: 0 auto;
+    margin-top: 40px;
+    width: 70%;
+    background-color: burlywood;
+}
+
+#savedSites p{
+    display: inline;
+    margin-right: 15px;
+}
+
+#savedSites Span{
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+}
+
+.plusButton{
+    font-size: 24px;
+    color: papayawhip;
+}
+
+input{
+    border-color: saddlebrown;
+    padding: 3px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+button{
+    border-radius: 5px;
+    background-color: papayawhip;
+    border-color: saddlebrown;
+}
+
+hr{
+    color: saddlebrown;
+}
