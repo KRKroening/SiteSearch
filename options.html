@@ -2,29 +2,7 @@
 <head>
     <title>SiteSearch: Options</title>
     
-    <style>
-        li {
-        list-style-type: none;
-        }
-        .parentList {
-            margin-left: 5px;
-            padding-left: 0px;
-        }
-        body{
-            width: 300px;
-        }
-        input[type="text"]
-        {
-            width: 70%;        
-        }   
-        input[type="submit"]
-        {
-            width: 20%;        
-            margin-left: 10px;
-        }     
-        </style>
     <link rel="manifest" href="manifest.json">
-    
     <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
     <link rel="stylesheet" href="css/style_options.css">
 </head>
@@ -42,8 +20,8 @@
     </div>
 	<br />
     <button id="save">Save</button>	
-    <hr/>
-    <div>
+
+    <div class=".currentSites">
         <h2>Current Saved Sites</h2>
         <ul id="savedSites"></ul>
     	<button id="clear">Clear All Sites</button>	        

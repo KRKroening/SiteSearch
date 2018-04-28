@@ -27,6 +27,7 @@ body{
 
 input{
     border-color: saddlebrown;
+    background-color: papayawhip;    
     padding: 3px;
     border-radius: 5px;
     margin-top: 5px;
@@ -38,6 +39,28 @@ button{
     border-color: saddlebrown;
 }
 
-hr{
-    color: saddlebrown;
+body > div.\2e currentSites{
+    border-top: 1px solid saddlebrown;    
 }
+
+#save{
+    margin-bottom: 10px;
+}
+
+li {
+    list-style-type: none;
+}
+.parentList {
+    margin-left: 5px;
+    padding-left: 0px;
+}
+
+input[type="text"]
+{
+    width: 70%;        
+}   
+input[type="submit"]
+{
+    width: 20%;        
+    margin-left: 10px;
+}     
