@@ -1,5 +1,16 @@
 function load(){
 
+    var editName = document.querySelector("#editName")
+    var editURL = document.querySelector("#editURL")
+    var atSpan = document.querySelector("#atSpan")
+    var editButton = document.querySelector("#editSave")
+    var editCancel = document.querySelector("#editCancel")
+    
+    var origName = ""
+    var origURL = ""
+    var childOrParent = ''
+    
+    
 
     document.querySelector(".plusButton").addEventListener('click',function(){
         const subsiteBoxes = document.querySelectorAll("#subsites input")
@@ -118,8 +129,8 @@ function load(){
         
             if(storageSite.length > 0)
             {                            
-                let siteSection = "<li><p>{0} @ {1}</p><span>X</span>"
-                let subsiteSelection =  "<li><p>{0} @ {1}</p><span>X</span></li>";
+                let siteSection = "<li><p>{0} @ {1}</p><span class='x'>X</span><span class='e'>E</span>"
+                let subsiteSelection =  "<li><p>{0} @ {1}</p><span class='x'>X</span><span class='e'>E</span></li>";
                 storageSite.forEach(function(s){
                     if(s != null){
                         let toAppend = "";
@@ -141,9 +152,13 @@ function load(){
                 p.appendChild(node);        
                 parentList.appendChild(p)
             }    
-            var nodes = document.querySelectorAll("#savedSites span")
-            nodes.forEach(x => {
+            var xs = document.querySelectorAll(".x")
+            xs.forEach(x => {
                 x.addEventListener('click', removeSiteOrChild)
+            })
+            var es = document.querySelectorAll(".e")
+            es.forEach(e => {
+                e.addEventListener('click', showEditControls)
             })
         });   
     }
@@ -213,6 +228,85 @@ function load(){
         }
     }
 
+    function showEditControls(){
+        var node = this.parentNode
+
+        childOrParent = node.parentNode.id == "savedSites"? "P" : "C"        
+        var siteName = node.firstChild.textContent.split(" @ ")[0]
+        var siteUrl = node.firstChild.textContent.split(" @ ")[1]
+        
+        editName.value = siteName
+        origName = siteName
+        editURL.value = siteUrl
+        origURL = siteUrl
+
+        editName.classList.remove('hidden')
+        editURL.classList.remove('hidden')
+        atSpan.classList.remove('hidden')
+        editButton.classList.remove('hidden')
+        editCancel.classList.remove('hidden')
+    }
+
+    function editSiteOrChild(){
+        var node = this.parentNode             
+
+        switch (childOrParent) {
+            case "P":                
+                chrome.storage.sync.get("Sites", function (result) {
+                    storage = result["Sites"]                    
+                    for (var i = 0; i < storage.length; i++) {
+                        if(storage[i] != null){
+                            if(storage[i].siteName == origName)
+                            {
+                                storage[i].siteName = editName.value
+                                storage[i].siteUrl = editURL.value                                
+                                break
+                            }                            
+                        }
+                    }                    
+                    chrome.storage.sync.set({"Sites": storage}, function () {
+                        chrome.storage.sync.get("Sites", function (result) {
+                            console.log(result)
+                            loadSavedSites()                    
+                        });
+                    })
+                })
+
+                break;
+
+            case "C":                                 
+                chrome.storage.sync.get("Sites", function (result) {
+                    storage = result["Sites"]                                        
+                    for (var i = 0; i < storage.length; i++) {
+                        if(storage[i] != null){
+                            if(storage[i].siteName == siteName)
+                            {
+                                for (var n = 0; n < storage[i].subsites.length; n++) {
+                                    if(storage[i].subsites != null)
+                                    {
+                                        if(storage[i].subsites[n].subsiteName == origName)
+                                        {
+                                            storage[i].subsites[n].subsiteName = editName
+                                            storage[i].subsites[n].subsiteUrl = editURL
+                                            
+                                            break
+                                        }
+                                    } 
+                                }                                                                
+                            }                            
+                        }
+                    }    
+                    chrome.storage.sync.set({"Sites": storage}, function () {
+                        loadSavedSites()                    
+                    })
+                })
+                break;
+        
+            default:
+                break;
+        }
+    }
+
     // String interpolation
     if (!String.prototype.format) {
         String.prototype.format = function() {
@@ -228,7 +322,15 @@ function load(){
 
     loadSavedSites()
     
+    editSave.addEventListener('click', editSiteOrChild)
 
+    editCancel.addEventListener('click', function(){
+        editName.classList.add('hidden')
+        editURL.classList.add('hidden')
+        atSpan.classList.add('hidden')
+        editButton.classList.add('hidden')
+        editCancel.classList.add('hidden')
+    })
     
 
 }

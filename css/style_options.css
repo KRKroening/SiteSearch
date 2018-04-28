@@ -16,8 +16,16 @@ body{
 
 #savedSites Span{
     cursor: pointer;
-    color: red;
     font-weight: bold;
+}
+
+.x{
+    color:red;
+}
+
+.e{
+    margin-left: 10px;
+    color:dodgerblue;
 }
 
 .plusButton{
@@ -64,3 +72,11 @@ input[type="submit"]
     width: 20%;        
     margin-left: 10px;
 }     
+
+.hidden{
+    display: none;
+}
+
+.editBox {
+    width: 100px!important;
+}
