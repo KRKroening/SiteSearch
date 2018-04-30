@@ -8,6 +8,8 @@ function load(){
     
     var origName = ""
     var origURL = ""
+    var origSubsiteName = ""
+    var origSubsiteUrl = ""
     var childOrParent = ''
     
     
@@ -232,13 +234,20 @@ function load(){
         var node = this.parentNode
 
         childOrParent = node.parentNode.id == "savedSites"? "P" : "C"        
-        var siteName = node.firstChild.textContent.split(" @ ")[0]
-        var siteUrl = node.firstChild.textContent.split(" @ ")[1]
-        
-        editName.value = siteName
-        origName = siteName
-        editURL.value = siteUrl
-        origURL = siteUrl
+        if(childOrParent == 'P'){
+            origName = node.firstChild.textContent.split(" @ ")[0]
+            origURL = node.firstChild.textContent.split(" @ ")[1]
+
+            editName.value = origName
+            editURL.value = origURL
+        }else {
+            origSubsiteName = node.firstChild.textContent.split(" @ ")[0]
+            origSubsiteUrl = node.firstChild.textContent.split(" @ ")[1]
+            origName = node.parentNode.parentNode.firstChild.textContent.split(" @ ")[0]
+
+            editName.value = origSubsiteName
+            editURL.value = origSubsiteUrl
+        }
 
         editName.classList.remove('hidden')
         editURL.classList.remove('hidden')
@@ -279,15 +288,15 @@ function load(){
                     storage = result["Sites"]                                        
                     for (var i = 0; i < storage.length; i++) {
                         if(storage[i] != null){
-                            if(storage[i].siteName == siteName)
+                            if(storage[i].siteName == origName)
                             {
                                 for (var n = 0; n < storage[i].subsites.length; n++) {
                                     if(storage[i].subsites != null)
                                     {
-                                        if(storage[i].subsites[n].subsiteName == origName)
+                                        if(storage[i].subsites[n].subsiteName == origSubsiteName)
                                         {
-                                            storage[i].subsites[n].subsiteName = editName
-                                            storage[i].subsites[n].subsiteUrl = editURL
+                                            storage[i].subsites[n].subsiteName = editName.value
+                                            storage[i].subsites[n].subsiteUrl = editURL.value
                                             
                                             break
                                         }
