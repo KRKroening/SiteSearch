@@ -96,6 +96,7 @@ document.querySelector("span").addEventListener('click', function(){
     radios.forEach(r => {
         r.checked = false
     })
+    document.querySelector('#searchText').value= ''
 })
 
 loadSavedSites()
