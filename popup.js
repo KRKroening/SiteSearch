@@ -91,6 +91,12 @@ if (!String.prototype.format) {
 
 //
 
+document.querySelector("span").addEventListener('click', function(){
+    var radios = document.querySelectorAll("input[type='radio']")
+    radios.forEach(r => {
+        r.checked = false
+    })
+})
 
 loadSavedSites()
 

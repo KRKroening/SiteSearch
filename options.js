@@ -275,7 +275,7 @@ function load(){
                     }                    
                     chrome.storage.sync.set({"Sites": storage}, function () {
                         chrome.storage.sync.get("Sites", function (result) {
-                            console.log(result)
+                            cancelEdit()                        
                             loadSavedSites()                    
                         });
                     })
@@ -306,6 +306,7 @@ function load(){
                         }
                     }    
                     chrome.storage.sync.set({"Sites": storage}, function () {
+                        cancelEdit()
                         loadSavedSites()                    
                     })
                 })
@@ -313,7 +314,15 @@ function load(){
         
             default:
                 break;
-        }
+        }        
+    }
+
+    function cancelEdit(){
+        editName.classList.add('hidden')
+        editURL.classList.add('hidden')
+        atSpan.classList.add('hidden')
+        editButton.classList.add('hidden')
+        editCancel.classList.add('hidden')
     }
 
     // String interpolation
@@ -333,13 +342,7 @@ function load(){
     
     editSave.addEventListener('click', editSiteOrChild)
 
-    editCancel.addEventListener('click', function(){
-        editName.classList.add('hidden')
-        editURL.classList.add('hidden')
-        atSpan.classList.add('hidden')
-        editButton.classList.add('hidden')
-        editCancel.classList.add('hidden')
-    })
+    editCancel.addEventListener('click', cancelEdit())
     
 
 }

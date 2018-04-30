@@ -59,6 +59,11 @@ html{
     border: 1px solid saddlebrown;
 }
 
+span:hover{
+    color: saddlebrown;
+    cursor: pointer;
+}
+
 /* 
 
 */
